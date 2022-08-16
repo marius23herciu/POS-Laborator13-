@@ -9,6 +9,15 @@ namespace POS_Laborator13_
         //am vazut pe cineva facand asa in timp ce cautam despre Singleton pe net...
         static void Main(string[] args)
         {
+            /*
+             * Scrieti un program care va modela operatiunile unui POS.
+
+             Instantiati banca, creeati conturi, depuneti bani in conturi, instantiati un POS, emiteti carduri si
+efectuati plati prin intermediul POS-ului
+Definiti exceptiile, tratati exceptiile si afisati mesaje corespunzatoare
+            Suplimentar:
+            Banca este unica la nivel de aplicatie. Cititi despre Singleton design pattern si folositi-l.
+            */
             BankAccount bankAccount = new BankAccount();
             bankAccount.CashDeposit(200);
             bankAccount.CashWithdrawal(200);

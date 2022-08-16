@@ -7,6 +7,21 @@ namespace POS_Laborator13_
 {
     public class BankAccount
     {
+        /*
+         * Contul bancar
+Va avea un ID de tip Guid
+Va avea o metoda DepuneNumerar
+Va avea o metoda ExtrageNumerar
+• Va avea ca parametru suma ce se doreste a fi extrasa
+• In cazul in care suma nu este disponibila, contul bancar va arunca o exceptie
+• Va fi folosita la de Banca atunci cand vor fi efectuate plati
+        Suplimentar:
+        Contul
+Va persista numarul de carduri emise.
+
+         */
+
+
         public Guid ID { get; set; }
         public int NumberOActivefCreditCards { get; private set; }
         public double Money { get; set; }

@@ -7,7 +7,39 @@ namespace POS_Laborator13_
 {
     public class Bank
     {
+        /*
+         Banca
+Va avea o lista de conturi curente indexate intr-un dictionar in functie de id-ul (Guid) acestora.
+Va avea o metoda „CreeazaCont” care
+• Va creea un nou cont bancar
+• Il va adauga in lista conturilor
+• Va returna id-ul contului
+Va avea o metoda „EmiteCard” care va primi ca parametru id-ul contului
+• In cazul in care contul nu exista va arunca o exceptie corespunzatoare
+• In cazul in care au fost emise deja 2 carduri pentru acel cont va arunca o exceptie.
+• Cardul emis va primi id-ul contului.
+Va avea o metoda „Plateste” care va primi 2 parametri: suma si id-ul contului.
+• In cazul in care contul nu exista va arunca o exceptie corespunzatoare
 
+        Suplimentar:
+        Banca
+La emiterea cardului
+• Va memora intr-un dictionar id-ul contului corespunzator fiecarui id al cardului.
+• In cazul in care au fost emise deja doua carduri pentru cont-ul cerut, nu va mai fi emis un nou
+card ci va fi aruncata o exceptie
+Metoda „Plateste” va primi ca parametru ID-ul cardului si inainte de a efectua plata va incerca
+determinarea contului pe baza id-ului cardului
+• Daca cardul nu poate fi gasit, va arunca o exceptie
+• Daca contul nu poate fi gasit, va arunca o exceptie
+Va avea o metoda „Connect”
+• Va arunca o exceptie daca sunt mai mult de 3 conexiuni active.
+• Va incrementa numarul de conexiuni active
+• Va afisa un mesaj pe ecran , „Connected”
+Va avea o metoda „Disconnect”
+• Va decrementa numarul conexiunilor active
+• Va afisa un mesaj pe ecran , „Disconnected”
+
+         */
         public static readonly Bank _instance = new Bank();
 
         private List<BankAccount> listOfAccounts = new List<BankAccount>();
