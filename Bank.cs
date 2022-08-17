@@ -43,9 +43,8 @@ Va avea o metoda „Disconnect”
         public static readonly Bank _instance = new Bank();
 
         private List<BankAccount> listOfAccounts = new List<BankAccount>();
-        private Dictionary<int, Guid> accountsID = new Dictionary<int, Guid>();
+        private Dictionary<Guid, Guid> accountsID = new Dictionary<Guid, Guid>();
         private Dictionary<Guid, Guid> creditCardsPairedToAccounts = new Dictionary<Guid, Guid>();
-        private int counterOfAccounts = 0;
         public int activeConnetions = 0;
         private Bank()
         {
@@ -64,7 +63,7 @@ Va avea o metoda „Disconnect”
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        public bool CheckIfAccountIdExists(Guid ID)
+        private bool CheckIfAccountIdExists(Guid ID)
         {
             foreach (var exsistentAccount in this.accountsID)
             {
@@ -81,7 +80,7 @@ Va avea o metoda „Disconnect”
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        public bool CheckIfCardIdExists(Guid ID)
+        private bool CheckIfCardIdExists(Guid ID)
         {
             foreach (var exsistentCard in this.creditCardsPairedToAccounts)
             {
@@ -99,34 +98,19 @@ Va avea o metoda „Disconnect”
         /// <param name="bankAccount"></param>
         public void AddBankAccount(BankAccount bankAccount)
         {
-            int flag = 0;
-            try
+            if (CheckIfAccountIdExists(bankAccount.ID) == true)
             {
-                if (CheckIfAccountIdExists(bankAccount.ID) == true)
-                {
-                    flag++;
-                    throw new Exception("Account already existent in bank's database.");
-                }
+                throw new Exception("Account already existent in bank's database.");
             }
-            catch (Exception e)
-            {
-
-                Console.WriteLine(e);
-            }
-
-            if (flag == 0)
-            {
-                counterOfAccounts++;
-                this.accountsID.Add(counterOfAccounts, bankAccount.ID);
-                this.listOfAccounts.Add(bankAccount);
-            }
+            this.accountsID.Add(bankAccount.ID, bankAccount.ID);
+            this.listOfAccounts.Add(bankAccount);
         }
         //}
         /// <summary>
         /// Creates bank account.
         /// </summary>
         /// <returns></returns>
-        public Guid CreateAccout()
+        public Guid CreateAccount()
         {
             BankAccount bankAccount = new BankAccount();
             AddBankAccount(bankAccount);
@@ -157,39 +141,19 @@ Va avea o metoda „Disconnect”
         /// <returns></returns>
         public Card IssueCard(BankAccount bankAccount)
         {
-            Card card = null;
-            try
+            if (CheckIfAccountIdExists(bankAccount.ID) != true)
             {
-                if (CheckIfAccountIdExists(bankAccount.ID) != true)
-                {
-                    throw new Exception("Account doesn't exist in bank's database.");
-                }
-                if (GetNumberOfCreditCardsFromBank(bankAccount) >= 2)
-                {
-                    throw new Exception("Account has allready 2 active credit cards.");
-                }
-                else
-                {
-                    card = new Card(Guid.NewGuid(), bankAccount);
-                    bankAccount.IncreaseNumberOfCreditCards();
-                    this.creditCardsPairedToAccounts.Add(card.ID, card.bankAccount.ID);
-                }
+                throw new Exception("Account doesn't exist in bank's database.");
             }
-            catch (Exception e)
+            if (GetNumberOfCreditCardsFromBank(bankAccount) >= 2)
             {
-                Console.WriteLine(e);
+                throw new Exception("Account has allready 2 active credit cards.");
             }
-            try
-            {
-                if (card == null)
-                {
-                    throw new Exception("Error creating credit card: null refference.");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+
+            Card card = new Card(Guid.NewGuid(), bankAccount);
+            bankAccount.IncreaseNumberOfCreditCards();
+            this.creditCardsPairedToAccounts.Add(card.ID, card.bankAccount.ID);
+
             return card;
         }
         /// <summary>
@@ -232,24 +196,13 @@ Va avea o metoda „Disconnect”
         /// <returns></returns>
         public bool Connect()
         {
-            try
+            if (activeConnetions >= 3)
             {
-                if (activeConnetions>=3)
-                {
-                    throw new Exception("Maximum connection limit is reached. Try later...");
-                }
-                else
-                {
-                    activeConnetions++;
-                    Console.WriteLine("Connected");
-                    return true;
-                }
+                throw new Exception("Maximum connection limit is reached. Try later...");
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return false;
+            activeConnetions++;
+            Console.WriteLine("Connected");
+            return true;
         }
         /// <summary>
         /// Disconnects from bank after payment.
@@ -266,31 +219,21 @@ Va avea o metoda „Disconnect”
         /// <param name="ID"></param>
         public void Pay(int ammount, Guid ID)
         {
-            try
+            BankAccount bankAccount = new BankAccount();
+            if (CheckIfCardIdExists(ID) == true)
             {
-                BankAccount bankAccount = new BankAccount();
-                if (CheckIfCardIdExists(ID) == true)
-                {
-                    bankAccount = GetBankAccount(GetBankAccountIDFromCardID(ID));
-                }
-                if (CheckIfCardIdExists(ID) != true)
-                {
-                    throw new Exception("Credit card ID doesn't exist in bank's database.");
-                }
-                if (bankAccount.Money < ammount)
-                {
-                    throw new Exception("The payment ammount exceeds the available sold.");
-                }
-                else
-                {
-                    bankAccount.Money -= ammount;
-                    Console.WriteLine("Pay done.");
-                }
+                bankAccount = GetBankAccount(GetBankAccountIDFromCardID(ID));
             }
-            catch (Exception e)
+            if (CheckIfCardIdExists(ID) != true)
             {
-                Console.WriteLine(e);
+                throw new Exception("Credit card ID doesn't exist in bank's database.");
             }
+            if (bankAccount.Money < ammount)
+            {
+                throw new Exception("The payment ammount exceeds the available sold.");
+            }
+            bankAccount.Money -= ammount;
+            Console.WriteLine("Pay done.");
         }
         /// <summary>
         /// Payment using bak account.
@@ -299,26 +242,16 @@ Va avea o metoda „Disconnect”
         /// <param name="bankAccount"></param>
         public void Pay(int ammount, BankAccount bankAccount)
         {
-            try
+            if (CheckIfAccountIdExists(bankAccount.ID) != true)
             {
-                if (CheckIfAccountIdExists(bankAccount.ID) != true)
-                {
-                    throw new Exception("Account doesn't exist in bank's database.");
-                }
-                if (bankAccount.Money < ammount)
-                {
-                    throw new Exception("The payment ammount exceeds the available sold.");
-                }
-                else
-                {
-                    bankAccount.Money -= ammount;
-                    Console.WriteLine("Pay done.");
-                }
+                throw new Exception("Account doesn't exist in bank's database.");
             }
-            catch (Exception e)
+            if (bankAccount.Money < ammount)
             {
-                Console.WriteLine(e);
+                throw new Exception("The payment ammount exceeds the available sold.");
             }
+            bankAccount.Money -= ammount;
+            Console.WriteLine("Pay done.");
         }
     }
 }

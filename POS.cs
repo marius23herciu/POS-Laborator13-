@@ -33,7 +33,6 @@ Dupa efectuarea platii, Pos-ul se va deconecta de la banca
         /// <param name="card"></param>
         public void Pay(int ammount, Card card)
         {
-            card.InsertCard();
             for (int i = 0; i < 2; i++)
             {
                 if (Connect()==true)
@@ -43,28 +42,6 @@ Dupa efectuarea platii, Pos-ul se va deconecta de la banca
                     break;
                 }
             }
-            card.ExtractCard();
-            //try
-            //{
-            //    card.InsertCard();
-
-            //    if (card.bankAccount.Money < ammount)
-            //    {
-            //        throw new Exception("The payment ammount exceeds the available sold.");
-            //    }
-            //    else
-            //    {
-            //        Bank.GetBank().Pay(ammount, card.GetCardData());
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //}
-            //finally
-            //{
-            //    card.ExtractCard();
-            //}
         }
         /// <summary>
         /// Connects POS to Bank.
@@ -72,22 +49,11 @@ Dupa efectuarea platii, Pos-ul se va deconecta de la banca
         /// <returns></returns>
         private bool Connect()
         {
-            try
+            if (Bank.GetBank().Connect() != true)
             {
-                if (Bank.GetBank().Connect() != true)
-                {
-                    throw new Exception("Connectiona failed...");
-                }
-                else
-                {
-                    return true;
-                }
+                throw new Exception("Connectiona failed...");
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return false;
+            return true;
         }
     }
 }

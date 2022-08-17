@@ -64,25 +64,13 @@ Va persista numarul de carduri emise.
         /// <returns></returns>
         public int CashWithdrawal(int withdrawalAmmount)
         {
-            try
+            if (withdrawalAmmount > this.Money)
             {
-                if (withdrawalAmmount > this.Money)
-                {
-                    throw new Exception("Insufficient funds");
-                }
-                else
-                {
-                    this.Money -= withdrawalAmmount;
-
-                    return withdrawalAmmount;
-                }
+                throw new Exception("Insufficient funds");
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            this.Money -= withdrawalAmmount;
 
-            return 0;
+            return withdrawalAmmount;
         }
     }
 }

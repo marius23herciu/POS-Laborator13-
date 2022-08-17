@@ -18,59 +18,124 @@ Definiti exceptiile, tratati exceptiile si afisati mesaje corespunzatoare
             Suplimentar:
             Banca este unica la nivel de aplicatie. Cititi despre Singleton design pattern si folositi-l.
             */
+
+
             BankAccount bankAccount = new BankAccount();
             bankAccount.CashDeposit(200);
-            bankAccount.CashWithdrawal(200);
-            bankAccount.CashWithdrawal(10);
-            bankAccount.CashDeposit(200);
-            bankAccount.CashWithdrawal(200);
+            CashWitdrawal(bankAccount, 200);
+            CashWitdrawal(bankAccount, 10);
+            bankAccount.CashDeposit(200); 
+            CashWitdrawal(bankAccount, 200);
 
             BankAccount bankAccount2 = new BankAccount();
             BankAccount bankAccount3 = new BankAccount();
 
             Bank bank = Bank.GetBank();
 
-            bank.AddBankAccount(bankAccount);
-            bank.AddBankAccount(bankAccount);
-            bank.AddBankAccount(bankAccount2);
-            bank.AddBankAccount(bankAccount3);
-            
-            bank.CreateAccout();
-            bank.CreateAccout();
-            bank.CreateAccout();
-            bank.CreateAccout();
+            AddAccountToBank(bankAccount);
+            AddAccountToBank(bankAccount);
+            AddAccountToBank(bankAccount2);
+            AddAccountToBank(bankAccount3);
 
-            var credCard1 = bank.IssueCard(bankAccount);
+            bank.CreateAccount();
+            bank.CreateAccount();
+            bank.CreateAccount();
+            bank.CreateAccount();
+
             var bankAccount999 = new BankAccount();
-            var creditCardNull = bank.IssueCard(bankAccount999);
-            var credCard2 = bank.IssueCard(bankAccount);
-            var credCard3 = bank.IssueCard(bankAccount);
+            var creditCardNull = IssueCreditCard(bankAccount999);
 
-            credCard3 = bank.IssueCard(bankAccount2);
-            var credCard4 = bank.IssueCard(bankAccount2);
-
-            var credCard5 = bank.IssueCard(bankAccount3);
-
-
+            var credCard1 = IssueCreditCard(bankAccount);
+            var credCard2 = IssueCreditCard(bankAccount);
+            var credCard3 = IssueCreditCard(bankAccount);
+            credCard3 = IssueCreditCard(bankAccount2);
+            var credCard4 = IssueCreditCard(bankAccount2);
+            var credCard5 = IssueCreditCard(bankAccount3);
+           
             bankAccount.CashDeposit(200);
-            bank.Pay(100, bankAccount999);
-            bank.Pay(300, bankAccount);
-            bank.Pay(100, bankAccount);
 
+            ///Pay by account
+            Pay(bankAccount999, 100);
+            Pay(bankAccount, 300);
+            Pay(bankAccount, 100);
             bankAccount2.CashDeposit(500);
-            bank.Pay(200, bankAccount2);
-
+            Pay(bankAccount2, 200);
             bankAccount3.CashDeposit(1000);
-            bank.Pay(100, bankAccount3);
+            Pay(bankAccount3, 100);
 
-            var POS = new POS();
-            POS.Pay(50, credCard1);
+            ///Pay by credit card
+            Pay(credCard1, 50);
             bank.activeConnetions = 3;
-            POS.Pay(100, credCard4);
+            Pay(credCard4, 100);
             bank.activeConnetions = 0;
-            POS.Pay(100, credCard4);
-            POS.Pay(1000, credCard4);
-            POS.Pay(150, credCard5);
+            Pay(credCard4, 100);
+            Pay(credCard4, 1000);
+            Pay(credCard5, 150);
+        }
+        static void CashWitdrawal(BankAccount bankAccount, int money)
+        {
+            try
+            {
+                bankAccount.CashWithdrawal(money);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        static void AddAccountToBank(BankAccount bankAccount)
+        {
+            try
+            {
+                Bank.GetBank().AddBankAccount(bankAccount);
+            }
+            catch (Exception e)
+            {
+
+                Console.WriteLine(e);
+            }
+        }
+        static Card IssueCreditCard(BankAccount bankAccount)
+        {
+            Card creditCard = null;
+            try
+            {
+                creditCard = Bank.GetBank().IssueCard(bankAccount);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return creditCard;
+        }
+        static void Pay(BankAccount bankAccount, int money)
+        {
+            try
+            {
+                Bank.GetBank().Pay(money, bankAccount);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        static void Pay(Card creditCard, int money)
+        {
+            var POS = new POS();
+            creditCard.InsertCard();
+            try
+            {
+                POS.Pay(money, creditCard);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                creditCard.ExtractCard();
+            }
         }
     }
 }
